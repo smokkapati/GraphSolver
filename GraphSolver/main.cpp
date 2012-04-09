@@ -6,28 +6,27 @@
  */
 
 #include <iostream>
+#include "GridGraph.h"
+#include "GridNode.h"
+#include "GridFileReader.h"
+
 using namespace std;
+
+
 
 int main(int argc, char **argv) {
 
-	if (argc < 2) {
-		cout << "Usage: GraphSolver [fname] [solver]" << endl;
-		cout << "[fname] = A file representing a graph to be solved" << endl;
-		cout << "[solver] = One of \"DFS\", \"BFS\", or \"A\"" << endl;
-	}
+	//run some unit tests
+	GridNode::test();
+	GridGraph::test();
 
-//	FileReader reader(argv[0]);
-//	Graph g;
-//	reader.populate(g); //will fill g with the appropriate graph representation
-	//Renderer context;
-	//Solver solver(g);
+	//We probably need to write a real file parser to define graphs and then pass them in to our solver
+	std::string fname = "null";
+	GridGraph graph = GridFileReader::parseFile(fname);
 
-	//while (true) {
-		//process inputs
-		//g.render(context);
-		//solver.render(context);
-		//solver.step();
-	//}
+	std::cout << "Graph is:" << std::endl << graph << std::endl;
+
+	//graphics biz
 
 
 	return 0;
