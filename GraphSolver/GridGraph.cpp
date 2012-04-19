@@ -16,16 +16,46 @@
 
 GridGraph::GridGraph(int numRows, int numCols) : m_numRows(numRows), m_numCols(numCols) {
 	m_nodes = new GridNode[m_numRows*m_numCols];
+	for (int row=0; row < m_numRows; row++) {
+		for (int col=0; col < m_numCols; col++) {
+			getNode(row, col).setIndex(row, col); //each node knows where it is in the grid
+		}
+	}
+}
+
+GridNode& GridGraph::operator()(int row, int col) const {
+	return getNode(row, col);
 }
 
 GridNode& GridGraph::getNode(int row, int col) const {
+	assert(row >=0 && row < m_numRows && col >=0 && col < m_numCols);
 	return m_nodes[m_numCols*row+col];
 }
-void GridGraph::addEdge(int row, int col, GridNode *other) {
-	getNode(row, col).addEdge(other);
+
+GridNode& GridGraph::getNode(int row, int col, int dir) const {
+	switch (dir) {
+	case GridNode::NORTH:
+		row -= 1;
+		break;
+	case GridNode::EAST:
+		col += 1;
+		break;
+	case GridNode::SOUTH:
+		row += 1;
+		break;
+	case GridNode::WEST:
+		col -= 1;
+		break;
+	}
+	return getNode(row, col);
 }
 
-bool GridGraph::containsEdge(int row, int col, DirectionT dir) const {
+void GridGraph::addEdge(int row, int col, int dir) {
+	assert(row >=0 && row < m_numRows && col >=0 && col < m_numCols);
+	getNode(row, col).addEdge(&getNode(row, col, dir), dir);
+}
+
+bool GridGraph::containsEdge(int row, int col, int dir) const {
 	bool ans = false;
 
 	//check out of bounds
@@ -34,7 +64,7 @@ bool GridGraph::containsEdge(int row, int col, DirectionT dir) const {
 	}
 	else {
 		switch (dir) {
-		case NORTH:
+		case GridNode::NORTH:
 			if (row == 0) {
 				ans = false;
 			}
@@ -42,7 +72,7 @@ bool GridGraph::containsEdge(int row, int col, DirectionT dir) const {
 				ans = getNode(row, col).containsEdge(&getNode(row - 1, col));
 			}
 			break;
-		case EAST:
+		case GridNode::EAST:
 			if (col == m_numCols - 1) {
 				ans = false;
 			}
@@ -50,7 +80,7 @@ bool GridGraph::containsEdge(int row, int col, DirectionT dir) const {
 				ans = getNode(row,col).containsEdge(&getNode(row, col+1));
 			}
 			break;
-		case SOUTH:
+		case GridNode::SOUTH:
 			if (row == m_numRows - 1) {
 				ans = false;
 			}
@@ -58,7 +88,7 @@ bool GridGraph::containsEdge(int row, int col, DirectionT dir) const {
 				ans = getNode(row,col).containsEdge(&getNode(row+1, col));
 			}
 			break;
-		case WEST:
+		case GridNode::WEST:
 			if (col == 0) {
 				ans = false;
 			}
@@ -75,10 +105,7 @@ GridGraph::~GridGraph() {
 	delete [] m_nodes;
 }
 
-inline
-GridNode& GridGraph::operator()(int row, int col) const {
-	return m_nodes[m_numCols*row+col];
-}
+
 
 std::ostream& operator<<(std::ostream& os, const GridGraph& g) {
 
@@ -89,13 +116,13 @@ std::ostream& operator<<(std::ostream& os, const GridGraph& g) {
 	for (int row=0; row < numRows; row++) {
 		for (int col=0; col < numCols; col++) {
 			if (col==0) { os << "|"; } //left wall
-			if (g.containsEdge(row,col, GridGraph::SOUTH)) {
+			if (g.containsEdge(row,col, GridNode::SOUTH)) {
 				os << " ";
 			}
 			else {
 				os << "_";
 			}
-			if (g.containsEdge(row,col, GridGraph::EAST)) {
+			if (g.containsEdge(row,col, GridNode::EAST)) {
 				os << " ";
 			}
 			else {
@@ -110,11 +137,10 @@ std::ostream& operator<<(std::ostream& os, const GridGraph& g) {
 
 void GridGraph::test() {
 	GridGraph g(1,2);
-	g.addEdge(0,0, &g(0,1));
-	assert(g(0,0).containsEdge(&g(0,1)));
-	assert(g(0,1).containsEdge(&g(0,0)));
-	assert(g.containsEdge(0,0,GridGraph::EAST));
-	assert(!g.containsEdge(0,0,GridGraph::SOUTH));
-	assert(!g.containsEdge(0,1,GridGraph::EAST));
-	assert(!g.containsEdge(0,1,GridGraph::NORTH));
+	g.addEdge(0,0, GridNode::EAST);
+	assert(g.containsEdge(0,0, GridNode::EAST));
+	assert(g.containsEdge(0,1, GridNode::WEST));
+	assert(!g.containsEdge(0,0,GridNode::SOUTH));
+	assert(!g.containsEdge(0,1,GridNode::EAST));
+	assert(!g.containsEdge(0,1,GridNode::NORTH));
 }

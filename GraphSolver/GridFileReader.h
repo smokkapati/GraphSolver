@@ -8,12 +8,15 @@
 #ifndef GRIDFILEREADER_H_
 #define GRIDFILEREADER_H_
 
-#include <string>
 #include "GridGraph.h"
 
 class GridFileReader {
 public:
-	static GridGraph parseFile(std::string fname);
+	static GridGraph* parseFile(const char *fname);
+private:
+	static GridGraph* snigdha10();
+	static GridGraph* simple4();
+
 };
 
 #endif /* GRIDFILEREADER_H_ */

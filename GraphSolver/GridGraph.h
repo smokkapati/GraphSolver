@@ -12,14 +12,14 @@
 
 class GridGraph {
 public:
-	typedef enum DirectionT {NORTH, EAST, WEST, SOUTH };
 
 	GridGraph(int numRows, int numCols);
-	virtual void addEdge(int row, int col, GridNode *other);
+	virtual void addEdge(int row, int col, int dir);
 
-	virtual GridNode& operator()(int row, int col) const;
 	virtual GridNode& getNode(int row, int col) const;
-	virtual bool containsEdge(int row, int col, DirectionT dir) const;
+	virtual GridNode& getNode(int row, int col, int dir) const;
+	virtual GridNode& operator()(int row, int col) const;
+	virtual bool containsEdge(int row, int col, int dir) const;
 
 	virtual int getNumRows() const { return m_numRows;}
 	virtual int getNumCols() const { return m_numCols;}

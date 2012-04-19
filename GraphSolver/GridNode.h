@@ -13,18 +13,30 @@
 
 class GridNode {
 public:
+
+	static const int NORTH = 0;
+	static const int EAST = 1;
+	static const int SOUTH = 2;
+	static const int WEST = 3;
+	static const int NUM_DIRS=4;
+
+	GridNode();
 	virtual ~GridNode() { };
-	virtual void addEdge(GridNode *node);
+	virtual void setIndex(int row, int col);
+	virtual void addEdge(GridNode *node, int dir);
 	virtual bool containsEdge(GridNode *node);
+	virtual bool containsEdge(int dir);
+	virtual int getRow() { return m_row; }
+	virtual int getCol() { return m_col; }
+	virtual GridNode* getNode(int dir);
+	int opposite(int dir);
+
 	static void test();
 
 	friend std::ostream& operator<<(std::ostream& os, const GridNode& node);
 protected:
-	std::vector< GridNode* > m_edges;
-
-
-
-
+	GridNode* m_neighbor[4];
+	int m_row, m_col;
 };
 
 #endif /* NODE_H_ */
