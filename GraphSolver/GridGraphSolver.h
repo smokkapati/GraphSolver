@@ -20,7 +20,10 @@ typedef struct GridGraphSolverCInfoT {
 
 class GridGraphSolver {
 
+
 public:
+
+	typedef enum SolveStateT { STEPPING, SOLVED, UNSOLVED };
 	void init(const GridGraphSolverCInfoT& info) {
 		m_graph = info.graph;
 		m_start = info.from;
@@ -32,10 +35,11 @@ public:
 		m_offsetX = m_cellWidth/2;
 		m_offsetY = m_cellHeight/2;
 		m_stepCount = 0; //tracks # of "steps" to solution (every path addition or removal)
+		m_state = STEPPING;
 	}
 
-	virtual void step() = 0;
-	virtual void solve() = 0;
+	virtual SolveStateT step() = 0;
+	virtual SolveStateT solve() = 0;
 	virtual void render() = 0;
 	virtual ~GridGraphSolver() {};
 
@@ -43,6 +47,7 @@ protected:
 	GridGraph *m_graph;
 	GridNode *m_start;
 	GridNode *m_finish;
+	SolveStateT m_state;
 	//rendering information should not be here but in the interests of time Ive put them here
 	int m_x, m_y, m_cellWidth, m_cellHeight, m_offsetX, m_offsetY;
 	int m_stepCount;

@@ -1,3 +1,11 @@
+0.0.1 4/18/12
+
+Currently builds and solves a small maze.
+This uses the DFSGraphSolver.
+This solver can not step() through its solution, but it
+can solve() it in a single step and this solution is correct.
+
+
 4/18/12
 
 Currently builds a small maze and has a partial solution.

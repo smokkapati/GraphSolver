@@ -28,8 +28,10 @@ public:
 	virtual bool containsEdge(int dir);
 	virtual int getRow() { return m_row; }
 	virtual int getCol() { return m_col; }
-	virtual GridNode* getNode(int dir);
+	virtual GridNode* getNeighbor(int dir);
 	int opposite(int dir);
+	bool isVisited() { return m_isVisited;}
+	void setVisited(bool isVisited) {m_isVisited = isVisited;}
 
 	static void test();
 
@@ -37,6 +39,7 @@ public:
 protected:
 	GridNode* m_neighbor[4];
 	int m_row, m_col;
+	bool m_isVisited;
 };
 
 #endif /* NODE_H_ */

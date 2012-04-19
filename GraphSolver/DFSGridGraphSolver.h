@@ -16,8 +16,8 @@ class GridNode;
 class DFSGridGraphSolver : public GridGraphSolver {
 public:
 	DFSGridGraphSolver(const GridGraphSolverCInfoT& info);
-	void step();
-	void solve();
+	SolveStateT step();
+	SolveStateT solve();
 	void render();
 
 	virtual ~DFSGridGraphSolver() {};

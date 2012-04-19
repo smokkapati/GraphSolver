@@ -19,7 +19,7 @@ GridGraph* GridFileReader::parseFile(const char *fname) {
 
 
 GridGraph* GridFileReader::simple4() {
-	GridGraph *graph = new GridGraph(4,4);
+	GridGraph *graph = new GridGraph(3,3);
 
 	graph->addEdge(0,0, GridNode::EAST);
 	graph->addEdge(0,1, GridNode::SOUTH);

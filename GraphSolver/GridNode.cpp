@@ -11,7 +11,7 @@
 
 using namespace std;
 
-GridNode::GridNode() : m_row(0), m_col(0) {
+GridNode::GridNode() : m_row(0), m_col(0), m_isVisited(false) {
 	for (int i=0; i < NUM_DIRS; i++) {
 		m_neighbor[i]= NULL;
 	}
@@ -52,7 +52,7 @@ bool GridNode::containsEdge(int dir) {
 	return (m_neighbor[dir] != NULL);
 }
 
-GridNode* GridNode::getNode(int dir) {
+GridNode* GridNode::getNeighbor(int dir) {
 	assert (dir >=0 && dir < NUM_DIRS);
 	return m_neighbor[dir];
 }

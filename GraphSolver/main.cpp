@@ -118,13 +118,19 @@ static void init(const char *fname)
 	gRenderer = new GridGraphRenderer(renderInfo);
 }
 
+static void update() {
+	if (GridGraphSolver::STEPPING != gSolver->step()) { //gSolver->solve();
+		//means either solved or unsolved but definitely finished
+		//so do something
+	}
+}
+
 static void drawGL ()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
 	gRenderer->render();
-	gSolver->step();
 	gSolver->render();
 	SDL_GL_SwapBuffers();
 }
@@ -175,7 +181,8 @@ static void mainLoop ()
         // Draw at 24 hz
         //     This approach is not normally recommended - it is better to
         //     use time-based animation and run as fast as possible
-        drawGL ();
+		update();
+        drawGL();
         SDL_GL_SwapBuffers ();
 
         // Time how long each draw-swap-delay cycle takes
