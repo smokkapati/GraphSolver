@@ -3,7 +3,10 @@
 #include <math.h>
 #include <opengl.h>
 #include <gl.h>
+#include <glut.h>
 #include "SDL.h"
+#include <string>
+#include <sstream>
 #include <iostream>
 
 #include "GridGraph.h"
@@ -20,6 +23,9 @@ static GridGraph *gGraph;
 static GridGraphRenderer *gRenderer;
 static GridGraphSolver *gSolver;
 static bool gDone;
+static int gRasterTextPosX = 0;
+static int gRasterTextPosY = 0;
+static const char *gSolverType;
 
 static void tidyObjects() {
 	if (gGraph) {
@@ -97,32 +103,60 @@ static void init(const char *fname)
 	GridGraphSolverCInfoT solverInfo;
 	solverInfo.graph = gGraph;
 	solverInfo.from = &gGraph->getNode(0,0);
-	solverInfo.to = &gGraph->getNode(2,2);
-	solverInfo.width = 200; //tell renderer its working area
-	solverInfo.height = 200;
+	solverInfo.to = &gGraph->getNode(6,0);
+	solverInfo.width = 550; //tell renderer its working area
+	solverInfo.height = 380;
 	solverInfo.xOrigin = 10; //and tell it where it's upper left corner is
 	solverInfo.yOrigin = 10;
 
 	gSolver = new DFSGridGraphSolver(solverInfo);
+	gSolverType = "DFSSolver";
 
-	//debugging only
-	gSolver->solve();
 
 	GridGraphRenderer::GridGraphRendererCInfoT renderInfo;
 	renderInfo.graph = gGraph;
-	renderInfo.solver = gSolver;
 	renderInfo.width = solverInfo.width; //tell renderer its working area
 	renderInfo.height = solverInfo.height;
 	renderInfo.xOrigin = solverInfo.xOrigin; //and tell it where it's upper left corner is
 	renderInfo.yOrigin = solverInfo.yOrigin;
 	gRenderer = new GridGraphRenderer(renderInfo);
+
+	gRasterTextPosX = 570;
+	gRasterTextPosY = 10;
+
+
+	//debugging only
+	//gSolver->solve();
+
 }
 
 static void update() {
-	if (GridGraphSolver::STEPPING != gSolver->step()) { //gSolver->solve();
-		//means either solved or unsolved but definitely finished
-		//so do something
+	static int updateCounter = 5;
+	if (!updateCounter--) {
+		gSolver->step();
+		updateCounter = 5;
 	}
+}
+
+static void drawStats() {
+
+	int lineDelta = 15;
+	const char *cStr = gSolverType;
+
+	glRasterPos2f(gRasterTextPosX, gRasterTextPosY);
+	while(*cStr) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *cStr++);
+	}
+
+	glRasterPos2f(gRasterTextPosX, gRasterTextPosY + lineDelta);
+	std::stringstream count;
+	count <<  "Steps: " << gSolver->getStepCount();
+	std::string temp = count.str();
+	cStr = temp.c_str();
+	while(*cStr) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *cStr++);
+	}
+
 }
 
 static void drawGL ()
@@ -132,6 +166,9 @@ static void drawGL ()
 
 	gRenderer->render();
 	gSolver->render();
+
+	drawStats();
+
 	SDL_GL_SwapBuffers();
 }
 
@@ -145,7 +182,7 @@ static void mainLoop ()
 {
 	gDone = false;
     SDL_Event event;
-    int fps = 24;
+    int fps = 60;
 	int delay = 1000/fps;
     int thenTicks = -1;
     int nowTicks;
@@ -178,12 +215,11 @@ static void mainLoop ()
 			}
 		}
     
-        // Draw at 24 hz
         //     This approach is not normally recommended - it is better to
         //     use time-based animation and run as fast as possible
 		update();
         drawGL();
-        SDL_GL_SwapBuffers ();
+        SDL_GL_SwapBuffers();
 
         // Time how long each draw-swap-delay cycle takes
         // and adjust delay to get closer to target framerate

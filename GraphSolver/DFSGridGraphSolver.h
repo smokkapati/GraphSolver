@@ -24,6 +24,7 @@ public:
 
 protected:
 	void drawPathSegment(GridNode *from, GridNode *to);
+	void drawCircle(int x, int y, int radius);
 
 	typedef struct PathNodeT {
 		int nextSearchEdge; //starts at 0, when = NUM_DIRS, the node can be popped

@@ -12,7 +12,6 @@
 
 GridGraphRenderer::GridGraphRenderer(const GridGraphRendererCInfoT& info) :
 	m_graph(info.graph),
-	m_solver(info.solver),
 	m_width(info.width), //total width
 	m_height(info.height), //total height
 	m_x(info.xOrigin),
@@ -23,9 +22,6 @@ GridGraphRenderer::GridGraphRenderer(const GridGraphRendererCInfoT& info) :
 	m_widthOffset = m_cellWidth/2;
 	m_heightOffset = m_cellHeight/2;
 
-	if (m_solver) {
-		m_solver->render();
-	}
 }
 
 
@@ -39,10 +35,12 @@ void GridGraphRenderer::render() {
 			drawCell(row, col);
 		}
 	}
-	if (m_solver) {
-		//m_solver->render();
-	}
+
 }
+
+
+
+
 
 void GridGraphRenderer::drawCell(int row, int col) {
 
