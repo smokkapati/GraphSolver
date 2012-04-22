@@ -49,29 +49,10 @@ GridGraphSolver::SolveStateT DFSGridGraphSolver::step() {
 	return m_state;
 }
 
-
-GridGraphSolver::SolveStateT DFSGridGraphSolver::solve() { //start starts on stack
-	if (m_path.back().node == m_finish) {
-		return SOLVED;
-	}
-	else {
-		PathNodeT current = m_path.back(); //get last element off stack
-		for (int dir=0; dir < GridNode::NUM_DIRS; dir++) {
-			if (current.node->containsEdge(dir) && !current.node->getNeighbor(dir)->isVisited()) {
-				PathNodeT next(current.node->getNeighbor(dir));
-				next.node->setVisited(true);
-				m_path.push_back(next);
-				incrementStepCount();
-				if (SOLVED == this->solve()) {
-					return SOLVED;
-				}
-			}
-		}
-		//current.node->setVisited(false); //we are unwinding our path
-		m_path.pop_back(); //pop this element - maze not solveable from here
-		incrementStepCount();
-		return UNSOLVED;
-	}
+//solves it all in one go
+GridGraphSolver::SolveStateT DFSGridGraphSolver::solve() {
+	while (step() == STEPPING);
+	return m_state;
 }
 
 void DFSGridGraphSolver::render()
