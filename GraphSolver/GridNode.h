@@ -18,12 +18,13 @@ public:
 	static const int EAST = 1;
 	static const int SOUTH = 2;
 	static const int WEST = 3;
-	static const int NUM_DIRS=4;
+	static const int NUM_DIRS = 4;
 
 	GridNode();
 	virtual ~GridNode() { };
 	virtual void setIndex(int row, int col);
 	virtual void addEdge(GridNode *node, int dir);
+	virtual void removeEdge(int dir);
 	virtual bool containsEdge(GridNode *node);
 	virtual bool containsEdge(int dir);
 	virtual int getRow() { return m_row; }

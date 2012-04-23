@@ -15,6 +15,7 @@ GridGraph* GridFileReader::parseFile(const char *fname) {
 
 //	return simple4();
 	return snigdha10();
+//	return testAStar();
 }
 
 GridGraph* GridFileReader::simple4() {
@@ -88,4 +89,25 @@ GridGraph* GridFileReader::snigdha10() {
 	graph->addEdge(4, 5, GridNode::EAST);
 	return graph;
 }
+
+
+GridGraph* GridFileReader::testAStar() {
+	GridGraph *graph = new GridGraph(6,8);
+	for (int row = 0; row < graph->getNumRows(); row++) {
+		for (int col =0; col < graph->getNumCols(); col++) {
+			for (int dir=0; dir <GridNode::NUM_DIRS; dir++) {
+				graph->addEdge(row,col,dir);
+			}
+		}
+	}
+
+	for (int row = 1; row <= 3; row++) {
+		int col = 3;
+		for (int dir = 0; dir < GridNode::NUM_DIRS; dir++) {
+			graph->removeEdge(row, col, dir);
+		}
+	}
+	return graph;
+}
+
 

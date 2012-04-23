@@ -9,7 +9,6 @@
 #include "gl.h"
 #include "GridNode.h"
 #include "GridGraph.h"
-#include <math.h>
 
 
 DFSGridGraphSolver::DFSGridGraphSolver(const GridGraphSolverCInfoT& info) {
@@ -51,7 +50,7 @@ GridGraphSolver::SolveStateT DFSGridGraphSolver::step() {
 
 //solves it all in one go
 GridGraphSolver::SolveStateT DFSGridGraphSolver::solve() {
-	while (step() == STEPPING);
+	while (step() == STEPPING); //will go through all the steps to a solution
 	return m_state;
 }
 
@@ -65,25 +64,9 @@ void DFSGridGraphSolver::render()
 		from = (*iter).node;
 	}
 
-	//draw start
-	drawCircle(m_start->getCol(), m_start->getRow(), m_cellWidth/4);
-	//draw end
-	glColor3f(0,0,1);
-	drawCircle(m_finish->getCol(), m_finish->getRow(), m_cellWidth/4);
+	renderStart();
+	renderFinish();
 }
-
-void DFSGridGraphSolver::drawCircle(int x, int y, int radius) {
-	glBegin(GL_LINE_LOOP);
-	double dtor = 3.1415 / 180;
-	int angle = 0;
-	for (angle = 0; angle <= 360; angle++) {
-		glVertex2f(m_x+ x*m_cellWidth + m_offsetX+sin(dtor * angle) * ((double) radius),
-				m_y+ y*m_cellHeight + m_offsetY + cos(dtor * angle) * ((double) radius));
-	}
-	glEnd();
-}
-
-
 
 
 void DFSGridGraphSolver::drawPathSegment(GridNode *from, GridNode *to) {

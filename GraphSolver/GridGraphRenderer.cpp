@@ -29,7 +29,6 @@ GridGraphRenderer::~GridGraphRenderer() {
 }
 
 void GridGraphRenderer::render() {
-	glColor3f(1, 0, 0); //pure red
 	for (int row=0; row < m_graph->getNumRows(); row++) {
 		for (int col=0; col < m_graph->getNumCols(); col++) {
 			drawCell(row, col);
@@ -40,37 +39,60 @@ void GridGraphRenderer::render() {
 
 
 
-
+//some shitty hack-fu
+#define WALL_COLOR 1,0,0 //pure red
+#define NO_WALL_COLOR .25f, .25f, .25f //gray
 
 void GridGraphRenderer::drawCell(int row, int col) {
 
 	if (!m_graph->containsEdge(row, col, GridNode::NORTH)) {
-		//draw TOP border
-		glBegin(GL_LINES);
-		glVertex2f(m_x+m_cellWidth*col, m_y+m_cellHeight*row);
-		glVertex2f(m_x+m_cellWidth*(col+1), m_y+m_cellHeight*row);
-		glEnd();
+		glColor3f(WALL_COLOR);
+
+	} else {
+		glColor3f(NO_WALL_COLOR);
 	}
+	//draw TOP border
+
+	glBegin(GL_LINES);
+	glVertex2f(m_x + m_cellWidth * col, m_y + m_cellHeight * row);
+	glVertex2f(m_x + m_cellWidth * (col + 1), m_y + m_cellHeight * row);
+	glEnd();
+
 	if (!m_graph->containsEdge(row, col, GridNode::EAST)) {
-		//draw RIGHT border
-		glBegin(GL_LINES);
-		glVertex2f(m_x+m_cellWidth*(col+1), m_y+m_cellHeight*row);
-		glVertex2f(m_x+m_cellWidth*(col+1), m_y+m_cellHeight*(row+1));
-		glEnd();
+		glColor3f(WALL_COLOR);
+
+	} else {
+		glColor3f(NO_WALL_COLOR);
 	}
+	//draw RIGHT border
+	glBegin(GL_LINES);
+	glVertex2f(m_x + m_cellWidth * (col + 1), m_y + m_cellHeight * row);
+	glVertex2f(m_x + m_cellWidth * (col + 1), m_y + m_cellHeight * (row + 1));
+	glEnd();
+
 	if (!m_graph->containsEdge(row, col, GridNode::SOUTH)) {
-		//draw TOP border
-		glBegin(GL_LINES);
-		glVertex2f(m_x+m_cellWidth*(col+1), m_y+m_cellHeight*(row+1));
-		glVertex2f(m_x+m_cellWidth*col, m_y+m_cellHeight*(row+1));
-		glEnd();
+		glColor3f(WALL_COLOR);
+
+	} else {
+		glColor3f(NO_WALL_COLOR);
 	}
+	//draw TOP border
+	glBegin(GL_LINES);
+	glVertex2f(m_x + m_cellWidth * (col + 1), m_y + m_cellHeight * (row + 1));
+	glVertex2f(m_x + m_cellWidth * col, m_y + m_cellHeight * (row + 1));
+	glEnd();
+
 	if (!m_graph->containsEdge(row, col, GridNode::WEST)) {
-		//draw LEFT border
-		glBegin(GL_LINES);
-		glVertex2f(m_x+m_cellWidth*col, m_y+m_cellHeight*(row+1));
-		glVertex2f(m_x+m_cellWidth*col, m_y+m_cellHeight*row);
-		glEnd();
+		glColor3f(WALL_COLOR);
+
+	} else {
+		glColor3f(NO_WALL_COLOR);
 	}
+	//draw LEFT border
+	glBegin(GL_LINES);
+	glVertex2f(m_x + m_cellWidth * col, m_y + m_cellHeight * (row + 1));
+	glVertex2f(m_x + m_cellWidth * col, m_y + m_cellHeight * row);
+	glEnd();
+
 }
 

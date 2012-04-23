@@ -51,8 +51,35 @@ GridNode& GridGraph::getNode(int row, int col, int dir) const {
 }
 
 void GridGraph::addEdge(int row, int col, int dir) {
-	assert(row >=0 && row < m_numRows && col >=0 && col < m_numCols);
-	getNode(row, col).addEdge(&getNode(row, col, dir), dir);
+	switch (dir) {
+	case GridNode::NORTH:
+		if (row > 0) {
+			getNode(row, col).addEdge(&getNode(row, col, dir), dir);
+		}
+		break;
+	case GridNode::EAST:
+		if (col < m_numCols-1) {
+			getNode(row, col).addEdge(&getNode(row, col, dir), dir);
+		}
+		break;
+	case GridNode::SOUTH:
+		if (row < m_numRows-1) {
+			getNode(row, col).addEdge(&getNode(row, col, dir), dir);
+		}
+		break;
+	case GridNode::WEST:
+		if (col > 0) {
+			getNode(row, col).addEdge(&getNode(row, col, dir), dir);
+		}
+		break;
+	}
+}
+
+
+void GridGraph::removeEdge(int row, int col, int dir) {
+	if(row >=0 && row < m_numRows && col >=0 && col < m_numCols) {
+		getNode(row, col).removeEdge(dir);
+	}
 }
 
 bool GridGraph::containsEdge(int row, int col, int dir) const {
@@ -62,43 +89,7 @@ bool GridGraph::containsEdge(int row, int col, int dir) const {
 	if (row < 0 || row >= m_numRows || col < 0 || col >= m_numCols) {
 		ans = false;
 	}
-	else {
-		switch (dir) {
-		case GridNode::NORTH:
-			if (row == 0) {
-				ans = false;
-			}
-			else {
-				ans = getNode(row, col).containsEdge(&getNode(row - 1, col));
-			}
-			break;
-		case GridNode::EAST:
-			if (col == m_numCols - 1) {
-				ans = false;
-			}
-			else {
-				ans = getNode(row,col).containsEdge(&getNode(row, col+1));
-			}
-			break;
-		case GridNode::SOUTH:
-			if (row == m_numRows - 1) {
-				ans = false;
-			}
-			else {
-				ans = getNode(row,col).containsEdge(&getNode(row+1, col));
-			}
-			break;
-		case GridNode::WEST:
-			if (col == 0) {
-				ans = false;
-			}
-			else {
-				ans = getNode(row,col).containsEdge(&getNode(row, col-1));
-			}
-			break;
-		}
-	}
-	return ans;
+	return (getNode(row,col).containsEdge(dir));
 }
 
 GridGraph::~GridGraph() {

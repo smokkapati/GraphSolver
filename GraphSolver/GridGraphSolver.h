@@ -43,6 +43,11 @@ public:
 	virtual SolveStateT getState() { return m_state; }
 	int getStepCount() { return m_stepCount; }
 	void incrementStepCount() { m_stepCount++; }
+	virtual void renderPath();
+	virtual void renderStart();
+	virtual void renderFinish();
+	virtual void drawCircle(int x, int y, int radius);
+
 
 	virtual void render() = 0;
 	virtual ~GridGraphSolver() {};

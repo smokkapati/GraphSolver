@@ -40,6 +40,13 @@ void GridNode::addEdge(GridNode *other, int dir) {
 	other->m_neighbor[opposite(dir)] = this;
 }
 
+void GridNode::removeEdge(int dir) {
+	if (m_neighbor[dir]) {
+		m_neighbor[dir]->m_neighbor[opposite(dir)] = NULL;
+	}
+	m_neighbor[dir] = NULL;
+}
+
 bool GridNode::containsEdge(GridNode *other) {
 	for (int i=0; i < NUM_DIRS; i++) {
 		if (m_neighbor[i] == other) { return true; }

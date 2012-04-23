@@ -1,3 +1,18 @@
+0.0.3 4/22/12
+J Newth
+
+Features:
+Improved graphing and counting
+Pushed code down in to GridGraphSolver
+Added A* classes
+
+TODO:
+BFS Solver
+BFS Stepping
+A* Solver
+A* Stepping
+Maze generation
+
 0.0.2 4/21/12
 
 Features:

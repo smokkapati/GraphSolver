@@ -15,6 +15,7 @@ public:
 
 	GridGraph(int numRows, int numCols);
 	virtual void addEdge(int row, int col, int dir);
+	virtual void removeEdge(int row, int col, int dir);
 
 	virtual GridNode& getNode(int row, int col) const;
 	virtual GridNode& getNode(int row, int col, int dir) const;

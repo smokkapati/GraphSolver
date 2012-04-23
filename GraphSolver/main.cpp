@@ -81,20 +81,15 @@ static void createSurface (int fullscreen)
 
 static void init(const char *fname)
 {
+	//set up 2D Perspective
 	SDL_WM_SetCaption("GraphSolver", "GraphSolver");
-
 	glClearColor(0, 0, 0, 0);
 	glClearDepth(1.0f);
-
 	glViewport(0, 0, 640, 480);
-
 	glMatrixMode(GL_PROJECTION); //prevents Z from affecting anything.
 	glLoadIdentity();
-
-	glOrtho(0, 640, 480, 0, 1, -1); //set up 2D Perspective
-
+	glOrtho(0, 640, 480, 0, 1, -1);
 	glMatrixMode(GL_MODELVIEW);
-
 	glEnable(GL_TEXTURE_2D);
 	glLoadIdentity();
 
@@ -102,16 +97,17 @@ static void init(const char *fname)
 	gGraph = GridFileReader::parseFile(fname);
 	GridGraphSolverCInfoT solverInfo;
 	solverInfo.graph = gGraph;
-	solverInfo.from = &gGraph->getNode(0,0);
-	solverInfo.to = &gGraph->getNode(6,0);
+	solverInfo.from = &gGraph->getNode(0,0); //2,1
+	solverInfo.to = &gGraph->getNode(2,5);
 	solverInfo.width = 550; //tell renderer its working area
 	solverInfo.height = 380;
 	solverInfo.xOrigin = 10; //and tell it where it's upper left corner is
 	solverInfo.yOrigin = 10;
 
 	gSolver = new DFSGridGraphSolver(solverInfo);
-	gSolverType = "DFSSolver";
-
+	gSolverType = "Depth-First";
+	//gSolverType = "Breadth-First";
+	//gSolverType = "A*-star";
 
 	GridGraphRenderer::GridGraphRendererCInfoT renderInfo;
 	renderInfo.graph = gGraph;
@@ -124,10 +120,8 @@ static void init(const char *fname)
 	gRasterTextPosX = 570;
 	gRasterTextPosY = 10;
 
-
 	//debugging only
 	//gSolver->solve();
-
 }
 
 static void update() {
@@ -156,7 +150,6 @@ static void drawStats() {
 	while(*cStr) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *cStr++);
 	}
-
 }
 
 static void drawGL ()
@@ -166,7 +159,6 @@ static void drawGL ()
 
 	gRenderer->render();
 	gSolver->render();
-
 	drawStats();
 
 	SDL_GL_SwapBuffers();

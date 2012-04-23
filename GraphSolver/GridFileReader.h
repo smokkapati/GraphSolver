@@ -16,6 +16,7 @@ public:
 private:
 	static GridGraph* snigdha10();
 	static GridGraph* simple4();
+	static GridGraph* testAStar();
 
 };
 
