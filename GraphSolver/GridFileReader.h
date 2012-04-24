@@ -17,7 +17,8 @@ private:
 	static GridGraph* snigdha10();
 	static GridGraph* simple4();
 	static GridGraph* testAStar();
-
+    static GridGraph* maze10();
+    
 };
 
 #endif /* GRIDFILEREADER_H_ */
