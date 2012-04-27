@@ -33,12 +33,6 @@ public:
 	int opposite(int dir);
 	bool isVisited() { return m_isVisited;}
 	void setVisited(bool isVisited) {m_isVisited = isVisited;}
-    std::string getStatus() { return m_status; }
-	void setStatus(std::string status) {m_status = status;}
-	int getChildCount() {return m_childCount;}
-	void setChildCount(int count) {m_childCount = count;}
-	GridNode* getParent() {return m_parent;}
-	void setParent(GridNode *parent) {m_parent = parent;}
     
 	static void test();
     
@@ -47,9 +41,6 @@ protected:
 	GridNode* m_neighbor[4];
 	int m_row, m_col;
 	bool m_isVisited;
-    std::string m_status;
-	int m_childCount;
-	GridNode* m_parent;
 };
 
 #endif /* NODE_H_ */

@@ -20,23 +20,28 @@ public:
 	SolveStateT step();
 	SolveStateT solve();
 	void render();
-
-	virtual ~BFSGridGraphSolver() {};
-
+    
+	virtual ~BFSGridGraphSolver();
+    
 protected:
+	typedef enum {LIST_A, LIST_B};
+	int currentList;
 	void drawPathSegment(GridNode *from, GridNode *to);
-	void drawCircle(int x, int y, int radius);
-
+    
 	typedef struct PathNodeT {
-		int nextSearchEdge;
-		GridNode *node;
-		PathNodeT(GridNode *n) {
-			nextSearchEdge = 0;
-			node = n;
-		}
+        PathNodeT *m_parent;
+        GridNode *m_node;
+        PathNodeT(PathNodeT *parent, GridNode *n) : m_parent(parent), m_node(n) {}
 	} PathNodeT;
-	std::vector <PathNodeT> m_path;
-	std::list <PathNodeT> m_list_path;
+    
+	virtual void computePath(PathNodeT* end);
+	void renderOpenAndClosedLists();
+	void drawListNode(PathNodeT *p);
+	void drawListNodeTail(PathNodeT *p);
+    
+	std::vector<PathNodeT *> m_path;
+	std::list<PathNodeT *> m_open_list;
+	std::list<PathNodeT *> m_closed_list;
 };
 
 

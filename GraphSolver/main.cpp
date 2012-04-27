@@ -15,6 +15,8 @@
 #include "GridGraphSolver.h"
 #include "DFSGridGraphSolver.h"
 #include "BFSGridGraphSolver.h"
+#include "AStarGridGraphSolver.h"
+#include "MyBFSGridGraphSolver.h"
 
 static SDL_Surface *gScreen;
 
@@ -24,10 +26,12 @@ static GridGraph *gGraph;
 static GridGraphRenderer *gRenderer;
 static GridGraphSolver *gSolver;
 static bool gDone;
+static bool gStep =false;
 static int gRasterTextPosX = 0;
 static int gRasterTextPosY = 0;
-static const char *gSolverType;
+static const char *gSolverStringDescription;
 
+static const int STEP_FRAME_COUNT = 45;
 static void tidyObjects() {
 	if (gGraph) {
 		delete gGraph;
@@ -93,24 +97,30 @@ static void init(const char *fname)
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_TEXTURE_2D);
 	glLoadIdentity();
-
+    
 	//create objects
-	gGraph = GridFileReader::parseFile(fname);
+	//gGraph = GridFileReader::getMaze(GridFileReader::ASTARTEST);
+	gGraph = GridFileReader::parseFile(NULL);
 	GridGraphSolverCInfoT solverInfo;
 	solverInfo.graph = gGraph;
-	solverInfo.from = &gGraph->getNode(0,0); //2,1
-	solverInfo.to = &gGraph->getNode(2,5);
+	//solverInfo.from = &gGraph->getNode(0,0); //2,1
+	//solverInfo.to = &gGraph->getNode(9,9);//(2,5);
+	solverInfo.from = &gGraph->getNode(0,0);
+	solverInfo.to = &gGraph->getNode(9,9);
+    
 	solverInfo.width = 550; //tell renderer its working area
 	solverInfo.height = 380;
 	solverInfo.xOrigin = 10; //and tell it where it's upper left corner is
 	solverInfo.yOrigin = 10;
-
+    
 	//gSolver = new DFSGridGraphSolver(solverInfo);
 	gSolver = new BFSGridGraphSolver(solverInfo);
-    //gSolverType = "Depth-First";
-	gSolverType = "Breadth-First";
-	//gSolverType = "A*-star";
-
+	//gSolver = new AStarGridGraphSolver(solverInfo);
+	//gSolver = new MyBFSGridGraphSolver(solverInfo);
+	//gSolverStringDescription = "DFS";
+	gSolverStringDescription = "BFS";
+	//gSolverStringDescription = "A*";
+    
 	GridGraphRenderer::GridGraphRendererCInfoT renderInfo;
 	renderInfo.graph = gGraph;
 	renderInfo.width = solverInfo.width; //tell renderer its working area
@@ -118,32 +128,37 @@ static void init(const char *fname)
 	renderInfo.xOrigin = solverInfo.xOrigin; //and tell it where it's upper left corner is
 	renderInfo.yOrigin = solverInfo.yOrigin;
 	gRenderer = new GridGraphRenderer(renderInfo);
-
+    
 	gRasterTextPosX = 570;
 	gRasterTextPosY = 10;
-
+    
 	//debugging only
-	gSolver->solve();
+	//gSolver->solve();
 }
 
 static void update() {
-	static int updateCounter = 5;
-	if (!updateCounter--) {
+	/*static int updateCounter = STEP_FRAME_COUNT;
+     if (!updateCounter--) {
+     gSolver->step();
+     updateCounter = STEP_FRAME_COUNT;
+     }*/
+    
+	//or use manual stepping
+	if (gStep) {
 		gSolver->step();
-		updateCounter = 5;
+		gStep=false;
 	}
 }
 
 static void drawStats() {
-
 	int lineDelta = 15;
-	const char *cStr = gSolverType;
-
+	const char *cStr = gSolverStringDescription;
+    
 	glRasterPos2f(gRasterTextPosX, gRasterTextPosY);
 	while(*cStr) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *cStr++);
 	}
-
+    
 	glRasterPos2f(gRasterTextPosX, gRasterTextPosY + lineDelta);
 	std::stringstream count;
 	count <<  "Steps: " << gSolver->getStepCount();
@@ -158,17 +173,20 @@ static void drawGL ()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-
+    
 	gRenderer->render();
 	gSolver->render();
 	drawStats();
-
+    
 	SDL_GL_SwapBuffers();
 }
 
 static void handleKey(SDLKey key) {
 	if (key == SDLK_ESCAPE) {
 		gDone = true;
+	}
+	if (key == SDLK_s) {
+		gStep = true;
 	}
 }
 
@@ -183,16 +201,16 @@ static void mainLoop ()
     
 	//We need to write a real file parser to define graphs and then pass them in to our solver
 	std::string fname = "null";
-
-
+    
+    
 	std::cout << "Graph is:" << std::endl << *gGraph << std::endl;
-
+    
     while ( !gDone ) {
-
+        
 		/* Check for events */
 		while ( SDL_PollEvent (&event) ) {
 			switch (event.type) {
-
+                    
 				case SDL_MOUSEMOTION:
 					break;
 				case SDL_MOUSEBUTTONDOWN:
@@ -208,13 +226,13 @@ static void mainLoop ()
 					break;
 			}
 		}
-    
+        
         //     This approach is not normally recommended - it is better to
         //     use time-based animation and run as fast as possible
 		update();
         drawGL();
         SDL_GL_SwapBuffers();
-
+        
         // Time how long each draw-swap-delay cycle takes
         // and adjust delay to get closer to target framerate
         if (thenTicks > 0) {
@@ -227,7 +245,7 @@ static void mainLoop ()
         else {
             thenTicks = SDL_GetTicks ();
         }
-
+        
         SDL_Delay (delay);
 	}
 }
@@ -238,14 +256,14 @@ int main(int argc, char *argv[])
 	if ( SDL_Init (SDL_INIT_VIDEO) < 0 ) {
 		
         fprintf(stderr, "Couldn't initialize SDL: %s\n",
-			SDL_GetError());
+                SDL_GetError());
 		exit(1);
 	}
-
+    
 	//run some unit tests
 	GridNode::test();
 	GridGraph::test();
-
+    
     // Set GL context attributes
     initAttributes();
     
@@ -253,10 +271,10 @@ int main(int argc, char *argv[])
     createSurface(0);
     
     // Get GL context attributes
-
+    
     // Init GL state
     //could get a file name and pass in here
-
+    
     init(NULL);
     
     // Draw, get events...
@@ -264,7 +282,7 @@ int main(int argc, char *argv[])
     
     // Cleanup
     tidyObjects();
-
+    
 	SDL_Quit();
 	
     return 0;
